@@ -1,0 +1,54 @@
+<h1>User CRUD Operation</h1>
+<h3 *ngIf="userIdToUpdate; else create"> 
+   Update User for Id: {{userIdToUpdate}}
+</h3>
+<ng-template #create>
+   <h3> Create A New User </h3>
+</ng-template>
+<div>
+ <form [formGroup]="userForm" (ngSubmit)="onUserFormSubmit()">
+  <table>
+    <tr><td> Name:</td><td><input formControlName="name">
+	       <label *ngIf="userForm.get('name').invalid && processValidation" [ngClass] = "'error'">  required. </label>
+   	</td></tr>
+    <tr><td> Email</td><td><input formControlName="email">
+	       <label *ngIf="userForm.get('email').invalid && processValidation" [ngClass] = "'error'"> required. </label>
+	</td></tr>	
+    <tr><td colspan="2">
+	    <button *ngIf="!userIdToUpdate">CREATE</button>  
+		<button *ngIf="userIdToUpdate">UPDATE</button>  
+	    <button (click)="backToCreateUser()" *ngIf="userIdToUpdate">Go Back</button>  
+	</td></tr>
+  </table>
+ </form> 
+ <br/>
+ <div *ngIf="statusCode; else processing">
+   <div *ngIf="statusCode === 201" [ngClass] = "'success'">
+	    User added successfully.
+   </div>   
+   <div *ngIf="statusCode === 409" [ngClass] = "'success'">
+        Article already exists.
+   </div>   	
+   <div *ngIf="statusCode === 200" [ngClass] = "'success'">
+        User updated successfully.
+   </div>   	      
+   <div *ngIf="statusCode === 204" [ngClass] = "'success'">
+        User deleted successfully.
+   </div>   	   
+   <div *ngIf="statusCode === 500" [ngClass] = "'error'">
+        Internal Server Error.
+   </div>   	
+ </div>
+ <ng-template #processing>
+	<img *ngIf="requestProcessing" src="assets/images/loading.gif">
+ </ng-template>
+</div>
+<h3>User Details</h3>
+<table>
+  <tr><th> Id</th> <th>Name</th><th>EmailAddress</th><th></th><th></th></tr>
+  <tr *ngFor="let user of allUsers" >
+    <td>{{user.userId}}</td> <td>{{user.name}}</td> <td>{{user.email}}</td>
+	<td><button type="button" (click)="loadUserToEdit(user.userId)">Edit</button> </td> 
+	<td><button type="button" (click)="deleteUser(user.userId)">Delete</button></td>
+  </tr>
+</table>
